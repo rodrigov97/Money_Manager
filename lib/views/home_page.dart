@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:money_manager/Api/money.dart';
+import 'package:money_manager/api/money.dart';
 import 'package:money_manager/widgets/custom_drawer.dart';
 import 'package:money_manager/helpers/helper.dart';
 import 'package:money_manager/models/dados.dart';
@@ -33,30 +33,30 @@ class _HomePageState extends State<HomePage> {
 
   IconData _iconVariation;
 
-  String _totalGasto;
-  String _totalGanho;
+  String _totalGasto = '0.00';
+  String _totalGanho = '0.00';
 
-  String dollarBuy;
-  String euroBuy;
-  String bitcoinBuy;
+  String dollarBuy = '0.00';
+  String euroBuy = '0.00';
+  String bitcoinBuy = '0.00';
 
-  String nomeIbovespa;
-  String locationIbovespa;
-  String pointsIbovespa;
-  String variationIbovespa;
+  String nomeIbovespa = 'NULL';
+  String locationIbovespa = 'NULL';
+  String pointsIbovespa = '0.00';
+  String variationIbovespa = '0.00';
 
-  String nomeNasdaq;
-  String locationNasdaq;
-  String pointsNasdaq;
-  String variationNasdaq;
+  String nomeNasdaq = 'NULL';
+  String locationNasdaq = 'NULL';
+  String pointsNasdaq = '0.00';
+  String variationNasdaq = '0.00';
 
-  String nomeCac;
-  String locationCac;
-  String variationCac;
+  String nomeCac = 'NULL';
+  String locationCac = '0.00';
+  String variationCac = '0.00';
 
-  String nomeNikkei;
-  String locationNikkei;
-  String variationNikkei;
+  String nomeNikkei = 'NULL';
+  String locationNikkei = '0.00';
+  String variationNikkei = '0.00';
 
   @override
   Widget build(BuildContext context) {
@@ -73,19 +73,19 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _helper.getGanhos().then((listGanho) {
+    _helper.getGanhos().then((listGanho) async {
       setState(() {
         _gastosListGanhos = listGanho;
         _loading = false;
       });
     });
-    _helper.getGastos().then((listGasto) {
+    _helper.getGastos().then((listGasto) async {
       setState(() {
         _gastosListGastos = listGasto;
         _loading = false;
       });
     });
-    _helper.getTotalGanho().then((listTotalGanho) {
+    _helper.getTotalGanho().then((listTotalGanho) async {
       setState(() {
         if (listTotalGanho == null) {
           _totalGanho = '0';
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     });
-    _helper.getTotalGasto().then((listTotalGasto) {
+    _helper.getTotalGasto().then((listTotalGasto) async {
       setState(() {
         if (listTotalGasto == null) {
           _totalGasto = '0';
@@ -105,22 +105,12 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     });
-    _helper.getAllHistorico().then((listTodos) {
-      setState(() {
-        _gastoHistorico = listTodos;
-        _loading = false;
-      });
-    });
-    getData().then((listTodos) async {
-      setState(() {
-        _moneyData = listTodos;
+  }
 
-        dollarBuy =
-            _moneyData["results"]["currencies"]["USD"]["buy"].toString();
-        euroBuy = _moneyData["results"]["currencies"]["EUR"]["buy"].toString();
-        bitcoinBuy =
-            _moneyData["results"]["currencies"]["BTC"]["buy"].toString();
-
+  Future getStock() async {
+    final _moneyData = await getData();
+    if (_moneyData != null)
+      setState(() {
         nomeIbovespa =
             _moneyData["results"]["stocks"]["IBOVESPA"]["name"].toString();
         locationIbovespa =
@@ -154,7 +144,6 @@ class _HomePageState extends State<HomePage> {
 
         _loading = false;
       });
-    });
   }
 
   Widget _buildAppBar() {
@@ -417,14 +406,24 @@ class _HomePageState extends State<HomePage> {
         )));
   }
 
-  void _converterReal() {
-    var valorReal = double.parse(_realController.text);
-    _dolarController.text =
-        (valorReal / double.parse(dollarBuy)).toStringAsFixed(2);
-    _euroController.text =
-        (valorReal / double.parse(euroBuy)).toStringAsFixed(2);
-    _bitcoinController.text =
-        (valorReal / double.parse(bitcoinBuy)).toStringAsFixed(10);
+  Future _converterReal() async {
+    final _moneyCurrency = await getData();
+
+    if (_moneyCurrency != null) {
+      dollarBuy =
+          _moneyCurrency["results"]["currencies"]["USD"]["buy"].toString();
+      euroBuy =
+          _moneyCurrency["results"]["currencies"]["EUR"]["buy"].toString();
+      bitcoinBuy =
+          _moneyCurrency["results"]["currencies"]["BTC"]["buy"].toString();
+      var valorReal = double.parse(_realController.text);
+      _dolarController.text =
+          (valorReal / double.parse(dollarBuy)).toStringAsFixed(2);
+      _euroController.text =
+          (valorReal / double.parse(euroBuy)).toStringAsFixed(2);
+      _bitcoinController.text =
+          (valorReal / double.parse(bitcoinBuy)).toStringAsFixed(10);
+    }
   }
 
   Widget _buildBolsa() {
@@ -489,7 +488,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 70),
+                      padding: EdgeInsets.only(top: 60),
                     ),
 
                     //NASDAQ
@@ -528,7 +527,7 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: 70),
+                      padding: EdgeInsets.only(top: 60),
                     ),
 
                     //CAC
@@ -561,7 +560,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 70),
+                      padding: EdgeInsets.only(top: 60),
                     ),
 
                     //NIKKEI
@@ -597,7 +596,14 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 55),
+                      padding: EdgeInsets.only(top: 20),
+                    ),
+                    RaisedButton(
+                      child: Text("ATUALIZAR",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black)),
+                      onPressed: getStock,
                     )
                   ],
                 ))));
