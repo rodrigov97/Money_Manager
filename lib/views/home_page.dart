@@ -93,10 +93,10 @@ class _HomePageState extends State<HomePage> {
         _moneyData = listTodos;
 
         dollarBuy =
-            _moneyData["results"]["currencies"]["USD"]["buy"];
-        euroBuy = _moneyData["results"]["currencies"]["EUR"]["buy"];
+            _moneyData["results"]["currencies"]["USD"]["buy"].toString();
+        euroBuy = _moneyData["results"]["currencies"]["EUR"]["buy"].toString();
         bitcoinBuy =
-            _moneyData["results"]["currencies"]["BTC"]["buy"];
+            _moneyData["results"]["currencies"]["BTC"]["buy"].toString();
         _loading = false;
       });
     });
@@ -358,7 +358,7 @@ class _HomePageState extends State<HomePage> {
               child: Text("CONVERTER",
                   style: TextStyle(
                       fontWeight: FontWeight.w300, color: Colors.black)),
-              onPressed: () {},
+              onPressed: _converterReal,
             )
           ],
         )));
@@ -366,8 +366,11 @@ class _HomePageState extends State<HomePage> {
 
   void _converterReal() {
     var valorReal = double.parse(_realController.text);
-    _dolarController.text = (valorReal / dollarBuy).toStringAsFixed(2);
-    _euroController.text = (valorReal / euroBuy).toStringAsFixed(2);
-    _bitcoinController.text = (valorReal / bitcoinBuy).toStringAsFixed(2);
+    _dolarController.text =
+        (valorReal / double.parse(dollarBuy)).toStringAsFixed(2);
+    _euroController.text =
+        (valorReal / double.parse(euroBuy)).toStringAsFixed(2);
+    _bitcoinController.text =
+        (valorReal / double.parse(bitcoinBuy)).toStringAsFixed(10);
   }
 }
