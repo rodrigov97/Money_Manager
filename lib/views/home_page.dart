@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   List<Gastos> _gastosListGastos = [];
   List<Gastos> _gastosListTodos = [];
   List<GastosHistorico> _gastoHistorico = [];
-  Map _moneyData;
+  Map _moneyData = Map();
 
   var _colorTotal;
   var _colorPoint;
