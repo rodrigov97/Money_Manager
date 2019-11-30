@@ -28,12 +28,35 @@ class _HomePageState extends State<HomePage> {
   Map _moneyData;
 
   var _colorTotal;
+  var _colorPoint;
+  var _colorVariation;
+
+  IconData _iconVariation;
+
   String _totalGasto;
   String _totalGanho;
 
-  var dollarBuy;
-  var euroBuy;
-  var bitcoinBuy;
+  String dollarBuy;
+  String euroBuy;
+  String bitcoinBuy;
+
+  String nomeIbovespa;
+  String locationIbovespa;
+  String pointsIbovespa;
+  String variationIbovespa;
+
+  String nomeNasdaq;
+  String locationNasdaq;
+  String pointsNasdaq;
+  String variationNasdaq;
+
+  String nomeCac;
+  String locationCac;
+  String variationCac;
+
+  String nomeNikkei;
+  String locationNikkei;
+  String variationNikkei;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +120,38 @@ class _HomePageState extends State<HomePage> {
         euroBuy = _moneyData["results"]["currencies"]["EUR"]["buy"].toString();
         bitcoinBuy =
             _moneyData["results"]["currencies"]["BTC"]["buy"].toString();
+
+        nomeIbovespa =
+            _moneyData["results"]["stocks"]["IBOVESPA"]["name"].toString();
+        locationIbovespa =
+            _moneyData["results"]["stocks"]["IBOVESPA"]["location"].toString();
+        pointsIbovespa =
+            _moneyData["results"]["stocks"]["IBOVESPA"]["points"].toString();
+        variationIbovespa =
+            _moneyData["results"]["stocks"]["IBOVESPA"]["variation"].toString();
+
+        nomeNasdaq =
+            _moneyData["results"]["stocks"]["NASDAQ"]["name"].toString();
+        locationNasdaq =
+            _moneyData["results"]["stocks"]["NASDAQ"]["location"].toString();
+        pointsNasdaq =
+            _moneyData["results"]["stocks"]["NASDAQ"]["points"].toString();
+        variationNasdaq =
+            _moneyData["results"]["stocks"]["NASDAQ"]["variation"].toString();
+
+        nomeCac = _moneyData["results"]["stocks"]["CAC"]["name"].toString();
+        locationCac =
+            _moneyData["results"]["stocks"]["CAC"]["location"].toString();
+        variationCac =
+            _moneyData["results"]["stocks"]["CAC"]["variation"].toString();
+
+        nomeNikkei =
+            _moneyData["results"]["stocks"]["NIKKEI"]["name"].toString();
+        locationNikkei =
+            _moneyData["results"]["stocks"]["NIKKEI"]["location"].toString();
+        variationNikkei =
+            _moneyData["results"]["stocks"]["NIKKEI"]["variation"].toString();
+
         _loading = false;
       });
     });
@@ -146,11 +201,11 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(fontWeight: FontWeight.w300)),
                       ),
                       Tab(
-                        child: Text('Ganhos',
+                        child: Text('Conversor',
                             style: TextStyle(fontWeight: FontWeight.w300)),
                       ),
                       Tab(
-                        child: Text('Histórico',
+                        child: Text('Stock Market',
                             style: TextStyle(fontWeight: FontWeight.w300)),
                       )
                     ]),
@@ -163,10 +218,10 @@ class _HomePageState extends State<HomePage> {
                     child: _buildTotal(),
                   ),
                   Container(
-                    child: _buildTab2(),
+                    child: _buildConversor(),
                   ),
                   Container(
-                    child: Text('Calma'),
+                    child: _buildBolsa(),
                   )
                 ],
               ),
@@ -175,7 +230,6 @@ class _HomePageState extends State<HomePage> {
         )));
   }
 
-  //TOTAL
   Widget _buildTotal() {
     return Padding(
         padding: EdgeInsets.all(10),
@@ -279,8 +333,7 @@ class _HomePageState extends State<HomePage> {
     return total;
   }
 
-  //TAB 2
-  Widget _buildTab2() {
+  Widget _buildConversor() {
     return Padding(
         padding: EdgeInsets.only(top: 20, bottom: 10, left: 50, right: 50),
         child: Container(
@@ -372,5 +425,234 @@ class _HomePageState extends State<HomePage> {
         (valorReal / double.parse(euroBuy)).toStringAsFixed(2);
     _bitcoinController.text =
         (valorReal / double.parse(bitcoinBuy)).toStringAsFixed(10);
+  }
+
+  Widget _buildBolsa() {
+    return Padding(
+        padding: EdgeInsets.only(top: 20, bottom: 10, left: 50, right: 50),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 20,
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[400],
+                  blurRadius: 10.0,
+                  spreadRadius: 0.1,
+                  offset: Offset(
+                    5.0,
+                    5.0,
+                  ),
+                )
+              ],
+            ),
+            child: Padding(
+                padding: EdgeInsets.all(40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    //IBOVESPA
+                    Text(nomeIbovespa + ', ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                            fontSize: 19)),
+                    Text(locationIbovespa,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 15)),
+                    Text('Pontos: ' + pointsIbovespa,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 17)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          _bolsaLabelIcon(),
+                          size: 15,
+                          color: _bolsaLabelVariationColor(),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 5),
+                        ),
+                        Text(variationIbovespa,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: _bolsaLabelVariationColor(),
+                                fontSize: 17)),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 70),
+                    ),
+
+                    //NASDAQ
+                    Text(nomeNasdaq + ', ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                            fontSize: 19)),
+                    Text(locationNasdaq,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 15)),
+                    Text('Pontos: ' + pointsIbovespa,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 17)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(_bolsaLabelIcon(),
+                            size: 15, color: _bolsaLabelVariationColor()),
+                        Padding(
+                          padding: EdgeInsets.only(right: 5),
+                        ),
+                        Text(variationNasdaq,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: _bolsaLabelVariationColor(),
+                                fontSize: 17)),
+                      ],
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top: 70),
+                    ),
+
+                    //CAC
+                    Text(nomeCac + ', ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                            fontSize: 19)),
+                    Text(locationCac,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 15)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(_bolsaLabelIcon(),
+                            size: 15, color: _bolsaLabelVariationColor()),
+                        Padding(
+                          padding: EdgeInsets.only(right: 5),
+                        ),
+                        Text(variationCac,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: _bolsaLabelVariationColor(),
+                                fontSize: 17)),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 70),
+                    ),
+
+                    //NIKKEI
+                    Text(nomeNikkei + ', ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                            fontSize: 19)),
+                    Text(locationNikkei,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black,
+                            fontSize: 15)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Icon(
+                          _bolsaLabelIcon(),
+                          size: 15,
+                          color: _colorVariation,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 5),
+                        ),
+                        Text(variationNikkei,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: _bolsaLabelVariationColor(),
+                                fontSize: 17)),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 55),
+                    )
+                  ],
+                ))));
+  }
+
+  Color _bolsaLabelVariationColor() {
+    if (double.parse(variationNasdaq) < 0) {
+      _colorVariation = Colors.red[400];
+    } else {
+      _colorVariation = Colors.green[400];
+    }
+    if (double.parse(variationCac) < 0) {
+      _colorVariation = Colors.red[400];
+    } else {
+      _colorVariation = Colors.green[400];
+    }
+    if (double.parse(variationNikkei) < 0) {
+      _colorVariation = Colors.red[400];
+    } else {
+      _colorVariation = Colors.green[400];
+    }
+
+    return _colorVariation;
+  }
+
+  _bolsaLabelIcon() {
+    if (double.parse(variationIbovespa) < 0) {
+      _iconVariation = _iconArrowDown();
+    } else {
+      _iconVariation = _iconArrowUp();
+    }
+    if (double.parse(variationNasdaq) < 0) {
+      _iconVariation = _iconArrowDown();
+    } else {
+      _iconVariation = _iconArrowUp();
+    }
+    if (double.parse(variationCac) < 0) {
+      _iconVariation = _iconArrowDown();
+    } else {
+      _iconVariation = _iconArrowUp();
+    }
+    if (double.parse(variationNikkei) < 0) {
+      _iconVariation = _iconArrowDown();
+    } else {
+      _iconVariation = _iconArrowUp();
+    }
+
+    return _iconVariation;
+  }
+
+  IconData _iconArrowDown() {
+    return FontAwesomeIcons.arrowCircleDown;
+  }
+
+  IconData _iconArrowUp() {
+    return FontAwesomeIcons.arrowCircleUp;
   }
 }

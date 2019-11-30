@@ -92,7 +92,7 @@ class _GanhosPage extends State<GanhosPage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 20)),
           subtitle: Text(
-              'Valor: R\$  ${gasto.valor.toString().replaceAll('.0', '.00')}',
+              'Valor: R\$  ${gasto.valor.toStringAsFixed(2)}',
               style: TextStyle(color: Colors.white, fontSize: 18)),
         ));
   }
