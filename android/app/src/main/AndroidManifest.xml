@@ -17,11 +17,5 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        <uses-feature android:name="android.hardware.wifi" />
-        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     </application>
 </manifest>
