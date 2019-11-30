@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
 
   Future getStock() async {
     final _moneyData = await getData();
-    if (_moneyData != null)
+    if (_moneyData != null) {
       setState(() {
         nomeIbovespa =
             _moneyData["results"]["stocks"]["IBOVESPA"]["name"].toString();
@@ -144,6 +144,9 @@ class _HomePageState extends State<HomePage> {
 
         _loading = false;
       });
+    } else {
+      _loading = false;
+    }
   }
 
   Widget _buildAppBar() {
@@ -364,6 +367,9 @@ class _HomePageState extends State<HomePage> {
                   labelText: "Real(R\$)",
                   labelStyle: TextStyle(
                       fontWeight: FontWeight.w300, color: Colors.black)),
+              validator: (text) {
+                return text.isEmpty ? 'Campo Obrigatório' : null;
+              },
             ),
             Padding(padding: EdgeInsets.only(top: 30)),
             TextFormField(
@@ -397,10 +403,16 @@ class _HomePageState extends State<HomePage> {
             ),
             Padding(padding: EdgeInsets.only(top: 30)),
             RaisedButton(
-              child: Text("CONVERTER",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w300, color: Colors.black)),
-              onPressed: _converterReal,
+              child: _loading
+                  ? _circularLoading
+                  : Text("CONVERTER",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w300, color: Colors.black)),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _converterReal();
+                }
+              },
             )
           ],
         )));
@@ -423,6 +435,8 @@ class _HomePageState extends State<HomePage> {
           (valorReal / double.parse(euroBuy)).toStringAsFixed(2);
       _bitcoinController.text =
           (valorReal / double.parse(bitcoinBuy)).toStringAsFixed(10);
+    } else {
+      _loading = true;
     }
   }
 
@@ -599,14 +613,24 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.only(top: 20),
                     ),
                     RaisedButton(
-                      child: Text("ATUALIZAR",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black)),
+                      child: _loading
+                          ? _circularLoading
+                          : Text("ATUALIZAR",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.black)),
                       onPressed: getStock,
                     )
                   ],
                 ))));
+  }
+
+  Widget _circularLoading() {
+    return Container(
+      height: 15.0,
+      width: 15.0,
+      child: CircularProgressIndicator(),
+    );
   }
 
   Color _bolsaLabelVariationColor() {
