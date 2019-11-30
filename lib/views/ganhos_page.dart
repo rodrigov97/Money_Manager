@@ -48,7 +48,7 @@ class _GanhosPage extends State<GanhosPage> {
 
   Widget _buildAppBar() {
     return AppBar(
-      title: Text('Ganhos'),
+      title: Text('Ganhos', style: TextStyle(fontWeight: FontWeight.w300)),
     );
   }
 
@@ -133,7 +133,6 @@ class _GanhosPage extends State<GanhosPage> {
                   icon: Icons.edit,
                   onTap: () {
                     _addGanho(
-                        histGanho: _gastosListHistorico[index],
                         deletedGanho: _gastosList[index],
                         index: index);
                   },
@@ -152,14 +151,13 @@ class _GanhosPage extends State<GanhosPage> {
   }
 
   Future _addGanho(
-      {GastosHistorico histGanho, Gastos deletedGanho, int index}) async {
+      {Gastos deletedGanho, int index}) async {
     final gasto = await showDialog<Gastos>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return ControleDialogGanhos(
           gastos: deletedGanho,
-          gastosHistorico: histGanho,
         );
       },
     );

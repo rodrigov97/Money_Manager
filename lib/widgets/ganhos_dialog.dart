@@ -16,7 +16,7 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
   final _tituloController = TextEditingController();
   final _valorController = TextEditingController();
   Gastos _gastos = Gastos();
-  GastosHistorico _gastosHistorico = GastosHistorico();
+
   var data = DateTime.now();
   String titulo = '';
 
@@ -42,7 +42,10 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.gastos == null ? 'Novo Ganho' : 'Editar Ganho'),
+      title: Text(
+        widget.gastos == null ? 'Novo Ganho' : 'Editar Ganho',
+        style: TextStyle(fontWeight: FontWeight.w300),
+      ),
       content: Form(
           key: _formKey,
           child: Column(
@@ -52,7 +55,9 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
               TextFormField(
                 keyboardType: TextInputType.text,
                 controller: _tituloController,
-                decoration: InputDecoration(labelText: 'Título'),
+                decoration: InputDecoration(
+                    labelText: 'Título',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w300)),
                 autofocus: true,
                 validator: (text) {
                   return text.isEmpty ? 'Campo Obrigatório' : null;
@@ -60,7 +65,9 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
               ),
               TextFormField(
                 controller: _valorController,
-                decoration: InputDecoration(labelText: 'Valor'),
+                decoration: InputDecoration(
+                    labelText: 'Valor',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w300)),
                 keyboardType: TextInputType.number,
                 validator: (text) {
                   return text.isEmpty ? 'Campo Obrigatório' : null;
@@ -70,13 +77,14 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
           )),
       actions: <Widget>[
         FlatButton(
-          child: Text('Cancelar'),
+          child:
+              Text('Cancelar', style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
-          child: Text('Salvar'),
+          child: Text('Salvar', style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             if (_formKey.currentState.validate()) {
               _gastos.nome = _tituloController.text;
@@ -84,11 +92,6 @@ class _ControleDialogGanhosState extends State<ControleDialogGanhos> {
               _gastos.data = data.toString();
               _gastos.tipo = 'Ganhos';
               Navigator.of(context).pop(_gastos);
-                            _gastosHistorico.nome = _tituloController.text;
-              _gastosHistorico.valor = double.parse(_valorController.text);
-              _gastosHistorico.tipo = 'Gastos';
-              _gastosHistorico.data = data.toString();
-              Navigator.of(context).pop(_gastosHistorico);
             }
           },
         ),

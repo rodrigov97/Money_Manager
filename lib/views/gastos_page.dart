@@ -28,7 +28,7 @@ class _GastosPage extends State<GastosPage> {
         _loading = false;
       });
     });
-        _helper.getGastosHistorico().then((listHist) {
+    _helper.getGastosHistorico().then((listHist) {
       setState(() {
         _gastosListHistorico = listHist;
         _loading = false;
@@ -48,7 +48,7 @@ class _GastosPage extends State<GastosPage> {
 
   Widget _buildAppBar() {
     return AppBar(
-      title: Text('Gastos'),
+      title: Text('Gastos', style: TextStyle(fontWeight: FontWeight.w300)),
     );
   }
 
@@ -91,7 +91,8 @@ class _GastosPage extends State<GastosPage> {
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 20)),
-          subtitle: Text('Valor: R\$  ${gasto.valor.toString().replaceAll('.0', '.00')}',
+          subtitle: Text(
+              'Valor: R\$  ${gasto.valor.toString().replaceAll('.0', '.00')}',
               style: TextStyle(color: Colors.white, fontSize: 18)),
         ));
   }
@@ -132,7 +133,7 @@ class _GastosPage extends State<GastosPage> {
                   color: Colors.blue,
                   icon: Icons.edit,
                   onTap: () {
-                    _addGastos(histGasto: _gastosListHistorico[index], editedGastos: _gastosList[index], index: index);
+                    _addGastos(editedGastos: _gastosList[index], index: index);
                   },
                 ),
                 IconSlideAction(
@@ -148,7 +149,7 @@ class _GastosPage extends State<GastosPage> {
             )));
   }
 
-  Future _addGastos({GastosHistorico histGasto, Gastos editedGastos, int index}) async {
+  Future _addGastos({Gastos editedGastos, int index}) async {
     final gasto = await showDialog<Gastos>(
       context: context,
       barrierDismissible: false,

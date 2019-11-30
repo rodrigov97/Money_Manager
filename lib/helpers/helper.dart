@@ -10,7 +10,6 @@ class GastosHelper {
   GastosHelper.internal();
 
   Database _db;
-  Database _dbHistorico;
   var hoje = DateTime.now();
 
   Future<Database> get db async {
@@ -18,15 +17,6 @@ class GastosHelper {
       return _db;
     } else {
       _db = await initDb();
-      return _db;
-    }
-  }
-
-    Future<Database> get dbHistorico async {
-    if (_db != null) {
-      return _db;
-    } else {
-      _db = await initDbHistorico();
       return _db;
     }
   }
@@ -42,17 +32,8 @@ class GastosHelper {
           "nome   TEXT, "
           "valor  FLOAT, "
           "data   TEXT, "
-          "tipo   TEXT)");
-    });
-  }
-
-    Future<Database> initDbHistorico() async {
-    final databasePath = await getDatabasesPath();
-    final path = join(databasePath, "gastos.db");
-
-    return openDatabase(path, version: 1,
-        onCreate: (Database dbHistorico, int newerVersion) async {
-      await dbHistorico.execute("CREATE TABLE gasto("
+          "tipo   TEXT) ");
+      await db.execute("CREATE TABLE gastoHistorico("
           "id     INTEGER PRIMARY KEY AUTOINCREMENT, "
           "nome   TEXT, "
           "valor  FLOAT, "
@@ -109,6 +90,15 @@ class GastosHelper {
     return moneyList;
   }
 
+  Future<List<GastosHistorico>> getAllHistorico() async {
+    Database database = await db;
+    List listMap =
+        await database.rawQuery("SELECT * FROM gastoHistorico ORDER BY data");
+    List<GastosHistorico> moneyList =
+        listMap.map((x) => GastosHistorico.fromMap(x)).toList();
+    return moneyList;
+  }
+
   Future<List<Gastos>> getGastos() async {
     Database database = await db;
     List listMap =
@@ -116,12 +106,13 @@ class GastosHelper {
     List<Gastos> moneyList = listMap.map((x) => Gastos.fromMap(x)).toList();
     return moneyList;
   }
-  
+
   Future<List<GastosHistorico>> getGastosHistorico() async {
     Database database = await db;
-    List listMap =
-        await database.rawQuery("SELECT * FROM gasto WHERE tipo = 'Gastos'");
-    List<GastosHistorico> moneyList = listMap.map((x) => GastosHistorico.fromMap(x)).toList();
+    List listMap = await database
+        .rawQuery("SELECT * FROM gastoHistorico WHERE tipo = 'Gastos'");
+    List<GastosHistorico> moneyList =
+        listMap.map((x) => GastosHistorico.fromMap(x)).toList();
     return moneyList;
   }
 
@@ -133,11 +124,12 @@ class GastosHelper {
     return moneyList;
   }
 
-    Future<List<GastosHistorico>> getGanhosHistorico() async {
+  Future<List<GastosHistorico>> getGanhosHistorico() async {
     Database database = await db;
-    List listMap =
-        await database.rawQuery("SELECT * FROM gasto WHERE tipo = 'Ganhos'");
-    List<GastosHistorico> moneyList = listMap.map((x) => GastosHistorico.fromMap(x)).toList();
+    List listMap = await database
+        .rawQuery("SELECT * FROM gastoHistorico WHERE tipo = 'Ganhos'");
+    List<GastosHistorico> moneyList =
+        listMap.map((x) => GastosHistorico.fromMap(x)).toList();
     return moneyList;
   }
 

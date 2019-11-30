@@ -22,7 +22,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ListTile(
               leading: Icon(_iconHome(), size: 24, color: Colors.blue[900]),
               title: Text('Home',
-                  style: TextStyle(color: Colors.grey[800], fontSize: 20)),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 20,fontWeight: FontWeight.w300)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.of(context).pushReplacementNamed(HomePage.routeName);
@@ -31,7 +31,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ListTile(
               leading: Icon(_iconGasto(), size: 24, color: Colors.red[600]),
               title: Text('Gastos',
-                  style: TextStyle(color: Colors.grey[800], fontSize: 20)),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 20,fontWeight: FontWeight.w300)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.of(context)
@@ -41,7 +41,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ListTile(
               leading: Icon(_iconGanho(), size: 24, color: Colors.green[600]),
               title: Text('Ganhos',
-                  style: TextStyle(color: Colors.grey[800], fontSize: 20)),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 20,fontWeight: FontWeight.w300)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.of(context)
@@ -52,7 +52,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ListTile(
               leading: Icon(_iconSobre(), size: 24, color: Colors.yellow[900]),
               title: Text('Sobre o projeto',
-                  style: TextStyle(color: Colors.grey[800], fontSize: 20)),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 20,fontWeight: FontWeight.w300)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.of(context).pushReplacementNamed(AboutPage.routeName);

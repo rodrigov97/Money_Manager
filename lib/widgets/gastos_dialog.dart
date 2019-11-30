@@ -42,7 +42,8 @@ class _ControleDialogState extends State<ControleDialogGastos> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.gastos == null ? 'Novo Gasto' : 'Editar Gasto'),
+      title: Text(widget.gastos == null ? 'Novo Gasto' : 'Editar Gasto',
+          style: TextStyle(fontWeight: FontWeight.w300)),
       content: Form(
           key: _formKey,
           child: Column(
@@ -52,7 +53,9 @@ class _ControleDialogState extends State<ControleDialogGastos> {
               TextFormField(
                 controller: _tituloController,
                 keyboardType: TextInputType.text,
-                decoration: InputDecoration(labelText: 'Título'),
+                decoration: InputDecoration(
+                    labelText: 'Título',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w300)),
                 autofocus: true,
                 validator: (text) {
                   return text.isEmpty ? 'Campo Obrigatório' : null;
@@ -60,7 +63,9 @@ class _ControleDialogState extends State<ControleDialogGastos> {
               ),
               TextFormField(
                 controller: _valorController,
-                decoration: InputDecoration(labelText: 'Valor'),
+                decoration: InputDecoration(
+                    labelText: 'Valor',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w300)),
                 keyboardType: TextInputType.number,
                 validator: (text) {
                   return text.isEmpty ? 'Campo Obrigatório' : null;
@@ -70,13 +75,13 @@ class _ControleDialogState extends State<ControleDialogGastos> {
           )),
       actions: <Widget>[
         FlatButton(
-          child: Text('Cancelar'),
+          child: Text('Cancelar', style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
-          child: Text('Salvar'),
+          child: Text('Salvar', style: TextStyle(fontWeight: FontWeight.w300)),
           onPressed: () {
             if (_formKey.currentState.validate()) {
               _gastos.nome = _tituloController.text;
@@ -84,11 +89,6 @@ class _ControleDialogState extends State<ControleDialogGastos> {
               _gastos.tipo = 'Gastos';
               _gastos.data = data.toString();
               Navigator.of(context).pop(_gastos);
-              _gastosHistorico.nome = _tituloController.text;
-              _gastosHistorico.valor = double.parse(_valorController.text);
-              _gastosHistorico.tipo = 'Gastos';
-              _gastosHistorico.data = data.toString();
-              Navigator.of(context).pop(_gastosHistorico);
             }
           },
         ),
