@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     });
-    getData().then((listTodos) {
+    getData().then((listTodos) async {
       setState(() {
         _moneyData = listTodos;
 

@@ -35,6 +35,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.7.3"
 
 
 # For information on the generic Dart part of this file, see the
@@ -78,3 +79,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_icons:
+  image_path: "assets/icon/res/mipmap-xxxhdpi/appIcon.png"
+  android: true 
+  ios: true
