@@ -13,18 +13,26 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Controle de Gastos',
-      theme: myTheme,
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: <String, WidgetBuilder>{
-        HomePage.routeName: (context) => new HomePage(),
-        AboutPage.routeName: (context) => new AboutPage(),
-        GastosPage.routeName: (context) => new GastosPage(),
-        GanhosPage.routeName: (context) => new GanhosPage(),
-      },
-      home: RootPage(),
-    );
+    return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: MaterialApp(
+          title: 'Controle de Gastos',
+          theme: myTheme,
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/',
+          routes: <String, WidgetBuilder>{
+            HomePage.routeName: (context) => new HomePage(),
+            AboutPage.routeName: (context) => new AboutPage(),
+            GastosPage.routeName: (context) => new GastosPage(),
+            GanhosPage.routeName: (context) => new GanhosPage(),
+          },
+          home: RootPage(),
+        ));
   }
 }

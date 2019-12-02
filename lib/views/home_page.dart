@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TabController _tabController;
   final _realController = TextEditingController();
   final _dolarController = TextEditingController();
   final _euroController = TextEditingController();
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   var _colorVariationNasdaq;
   var _colorVariationCac;
   var _colorVariationNikkei;
+  var me;
 
   IconData _iconVariationIbovespa;
   IconData _iconVariationNasdaq;
@@ -66,10 +68,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var me = context;
     return Scaffold(
       appBar: _buildAppBar(),
       drawer: CustomDrawer(),
-      body: _buildMainScreen(),
+      body: _buildMainScreen(me),
       resizeToAvoidBottomInset: false,
     );
   }
@@ -113,12 +116,8 @@ class _HomePageState extends State<HomePage> {
       });
     });
     getData().then((listData) async {
-      final _moneyData = await getData();
-      if (_moneyData != null) {
-        updateStock();
-        _bolsaLabelVariationColor();
-        _bolsaLabelIcon();
-      }
+      final update = await updateStock();
+      final buildVariation = await _bolsaLabelVariation();
     });
   }
 
@@ -169,73 +168,78 @@ class _HomePageState extends State<HomePage> {
         title: Text('Home', style: TextStyle(fontWeight: FontWeight.w300)));
   }
 
-  Widget _buildMainScreen() {
+  Widget _buildMainScreen(BuildContext context) {
+    me = context;
     return DefaultTabController(
         length: 3,
         child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            primary: false,
             body: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[400],
-                      blurRadius: 10.0,
-                      spreadRadius: 0.1,
-                      offset: Offset(
-                        5.0,
-                        5.0,
-                      ),
-                    )
-                  ],
-                ),
-                child: TabBar(
-                    indicator: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(99.0)),
-                      color: Colors.transparent,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey[400],
+                          blurRadius: 10.0,
+                          spreadRadius: 0.1,
+                          offset: Offset(
+                            5.0,
+                            5.0,
+                          ),
+                        )
+                      ],
                     ),
-                    labelColor: Colors.black,
-                    labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                    unselectedLabelColor: Colors.black38,
-                    tabs: [
-                      Tab(
-                        child: Text('Overview',
-                            style: TextStyle(fontWeight: FontWeight.w300)),
+                    child: TabBar(
+                        controller: _tabController,
+                        indicator: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(99.0)),
+                          color: Colors.transparent,
+                        ),
+                        labelColor: Colors.black,
+                        labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                        unselectedLabelColor: Colors.black38,
+                        tabs: [
+                          Tab(
+                            child: Text('Overview',
+                                style: TextStyle(fontWeight: FontWeight.w300)),
+                          ),
+                          Tab(
+                            child: Text('Conversor',
+                                style: TextStyle(fontWeight: FontWeight.w300)),
+                          ),
+                          Tab(
+                            child: Text('Stock Market',
+                                style: TextStyle(fontWeight: FontWeight.w300)),
+                          )
+                        ]),
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      Container(
+                        child: _buildTotal(),
                       ),
-                      Tab(
-                        child: Text('Conversor',
-                            style: TextStyle(fontWeight: FontWeight.w300)),
+                      Container(
+                        child: _buildConversor(),
                       ),
-                      Tab(
-                        child: Text('Stock Market',
-                            style: TextStyle(fontWeight: FontWeight.w300)),
+                      Container(
+                        child: _loadingStock
+                            ? _circularLoadingStock()
+                            : _buildBolsa(),
                       )
-                    ]),
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  Container(
-                    child: _buildTotal(),
+                    ],
                   ),
-                  Container(
-                    child: _buildConversor(),
-                  ),
-                  Container(
-                    child:
-                        _loadingStock ? _circularLoadingStock() : _buildBolsa(),
-                  )
-                ],
-              ),
-            ),
-          ],
-        )));
+                ),
+              ],
+            )));
   }
 
   Widget _buildTotal() {
@@ -382,7 +386,7 @@ class _HomePageState extends State<HomePage> {
               decoration: InputDecoration(
                   labelText: "Real(R\$)",
                   labelStyle: TextStyle(
-                      fontWeight: FontWeight.w300, color: Colors.black)),
+                      fontWeight: FontWeight.w300, color: Colors.red)),
               validator: (text) {
                 return text.isEmpty ? 'Campo Obrigatório' : null;
               },
@@ -636,8 +640,7 @@ class _HomePageState extends State<HomePage> {
                                     color: Colors.black)),
                         onPressed: () {
                           updateStock();
-                          _bolsaLabelVariationColor();
-                          _bolsaLabelIcon();
+                          _bolsaLabelVariation();
                         }),
                   ]),
             )));
@@ -666,9 +669,9 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Center(
                 child: Container(
-              height: 15.0,
-              width: 15.0,
-              child: CircularProgressIndicator(),
+              height: 40.0,
+              width: 40.0,
+              child: CircularProgressIndicator(strokeWidth: 3),
             ))));
   }
 
@@ -680,56 +683,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future _bolsaLabelVariationColor() async {
+  Future _bolsaLabelVariation() async {
     final _moneyData = await getData();
     if (_moneyData != null) {
       setState(() {
         if (double.parse(variationIbovespa) < 0) {
           _colorVariationIbovespa = Colors.red[400];
-        } else {
-          _colorVariationIbovespa = Colors.green[400];
-        }
-        if (double.parse(variationNasdaq) < 0) {
-          _colorVariationNasdaq = Colors.red[400];
-        } else {
-          _colorVariationNasdaq = Colors.green[400];
-        }
-        if (double.parse(variationCac) < 0) {
-          _colorVariationCac = Colors.red[400];
-        } else {
-          _colorVariationCac = Colors.green[400];
-        }
-        if (double.parse(variationNikkei) < 0) {
-          _colorVariationNikkei = Colors.red[400];
-        } else {
-          _colorVariationNikkei = Colors.green[400];
-        }
-      });
-    }
-  }
-
-  Future _bolsaLabelIcon() async {
-    final _moneyData = await getData();
-    if (_moneyData != null) {
-      setState(() {
-        if (double.parse(variationIbovespa) < 0) {
           _iconVariationIbovespa = _iconArrowDown();
         } else {
+          _colorVariationIbovespa = Colors.green[400];
           _iconVariationIbovespa = _iconArrowUp();
         }
         if (double.parse(variationNasdaq) < 0) {
+          _colorVariationNasdaq = Colors.red[400];
           _iconVariationNasdaq = _iconArrowDown();
         } else {
+          _colorVariationNasdaq = Colors.green[400];
           _iconVariationNasdaq = _iconArrowUp();
         }
         if (double.parse(variationCac) < 0) {
+          _colorVariationCac = Colors.red[400];
           _iconVariationCac = _iconArrowDown();
         } else {
+          _colorVariationCac = Colors.green[400];
           _iconVariationCac = _iconArrowUp();
         }
         if (double.parse(variationNikkei) < 0) {
+          _colorVariationNikkei = Colors.red[400];
           _iconVariationNikkei = _iconArrowDown();
         } else {
+          _colorVariationNikkei = Colors.green[400];
           _iconVariationNikkei = _iconArrowUp();
         }
       });
