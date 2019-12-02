@@ -24,14 +24,20 @@ class _HomePageState extends State<HomePage> {
   List<Gastos> _gastosListGanhos = [];
   List<Gastos> _gastosListGastos = [];
   List<Gastos> _gastosListTodos = [];
-  List<GastosHistorico> _gastoHistorico = [];
   Map _moneyData = Map();
 
   var _colorTotal;
-  var _colorPoint;
-  var _colorVariation;
+  var _colorPointIbovespa;
+  var _colorPointNasdaq;
+  var _colorVariationIbovespa;
+  var _colorVariationNasdaq;
+  var _colorVariationCac;
+  var _colorVariationNikkei;
 
-  IconData _iconVariation;
+  IconData _iconVariationIbovespa;
+  IconData _iconVariationNasdaq;
+  IconData _iconVariationCac;
+  IconData _iconVariationNikkei;
 
   String _totalGasto = '0.00';
   String _totalGanho = '0.00';
@@ -69,6 +75,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool _loading = true;
+  bool _loadingStock = true;
 
   @override
   void initState() {
@@ -105,9 +112,17 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     });
+    getData().then((listData) async {
+      final _moneyData = await getData();
+      if (_moneyData != null) {
+        updateStock();
+        _bolsaLabelVariationColor();
+        _bolsaLabelIcon();
+      }
+    });
   }
 
-  Future getStock() async {
+  Future updateStock() async {
     final _moneyData = await getData();
     if (_moneyData != null) {
       setState(() {
@@ -142,10 +157,10 @@ class _HomePageState extends State<HomePage> {
         variationNikkei =
             _moneyData["results"]["stocks"]["NIKKEI"]["variation"].toString();
 
-        _loading = false;
+        _loadingStock = false;
       });
     } else {
-      _loading = false;
+      _loadingStock = false;
     }
   }
 
@@ -213,7 +228,8 @@ class _HomePageState extends State<HomePage> {
                     child: _buildConversor(),
                   ),
                   Container(
-                    child: _buildBolsa(),
+                    child:
+                        _loadingStock ? _circularLoadingStock() : _buildBolsa(),
                   )
                 ],
               ),
@@ -404,7 +420,7 @@ class _HomePageState extends State<HomePage> {
             Padding(padding: EdgeInsets.only(top: 30)),
             RaisedButton(
               child: _loading
-                  ? _circularLoading
+                  ? _circularLoading()
                   : Text("CONVERTER",
                       style: TextStyle(
                           fontWeight: FontWeight.w300, color: Colors.black)),
@@ -420,7 +436,6 @@ class _HomePageState extends State<HomePage> {
 
   Future _converterReal() async {
     final _moneyCurrency = await getData();
-
     if (_moneyCurrency != null) {
       dollarBuy =
           _moneyCurrency["results"]["currencies"]["USD"]["buy"].toString();
@@ -462,8 +477,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             child: Padding(
-                padding: EdgeInsets.all(40),
-                child: Column(
+              padding: EdgeInsets.all(40),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     //IBOVESPA
@@ -487,9 +502,9 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: <Widget>[
                         Icon(
-                          _bolsaLabelIcon(),
+                          _iconVariationIbovespa,
                           size: 15,
-                          color: _bolsaLabelVariationColor(),
+                          color: _colorVariationIbovespa,
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 5),
@@ -497,7 +512,7 @@ class _HomePageState extends State<HomePage> {
                         Text(variationIbovespa,
                             style: TextStyle(
                                 fontWeight: FontWeight.w300,
-                                color: _bolsaLabelVariationColor(),
+                                color: _colorVariationIbovespa,
                                 fontSize: 17)),
                       ],
                     ),
@@ -527,15 +542,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Row(
                       children: <Widget>[
-                        Icon(_bolsaLabelIcon(),
-                            size: 15, color: _bolsaLabelVariationColor()),
+                        Icon(_iconVariationNasdaq,
+                            size: 15, color: _colorVariationNasdaq),
                         Padding(
                           padding: EdgeInsets.only(right: 5),
                         ),
                         Text(variationNasdaq,
                             style: TextStyle(
                                 fontWeight: FontWeight.w300,
-                                color: _bolsaLabelVariationColor(),
+                                color: _colorVariationNasdaq,
                                 fontSize: 17)),
                       ],
                     ),
@@ -561,15 +576,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Row(
                       children: <Widget>[
-                        Icon(_bolsaLabelIcon(),
-                            size: 15, color: _bolsaLabelVariationColor()),
+                        Icon(_iconVariationCac,
+                            size: 15, color: _colorVariationCac),
                         Padding(
                           padding: EdgeInsets.only(right: 5),
                         ),
                         Text(variationCac,
                             style: TextStyle(
                                 fontWeight: FontWeight.w300,
-                                color: _bolsaLabelVariationColor(),
+                                color: _colorVariationCac,
                                 fontSize: 17)),
                       ],
                     ),
@@ -595,9 +610,9 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: <Widget>[
                         Icon(
-                          _bolsaLabelIcon(),
+                          _iconVariationNikkei,
                           size: 15,
-                          color: _colorVariation,
+                          color: _colorVariationNikkei,
                         ),
                         Padding(
                           padding: EdgeInsets.only(right: 5),
@@ -605,7 +620,7 @@ class _HomePageState extends State<HomePage> {
                         Text(variationNikkei,
                             style: TextStyle(
                                 fontWeight: FontWeight.w300,
-                                color: _bolsaLabelVariationColor(),
+                                color: _colorVariationNikkei,
                                 fontSize: 17)),
                       ],
                     ),
@@ -613,19 +628,51 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.only(top: 20),
                     ),
                     RaisedButton(
-                      child: _loading
-                          ? _circularLoading
-                          : Text("ATUALIZAR",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.black)),
-                      onPressed: getStock,
-                    )
-                  ],
-                ))));
+                        child: _loading
+                            ? _circularLoading()
+                            : Text("ATUALIZAR",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black)),
+                        onPressed: () {
+                          updateStock();
+                          _bolsaLabelVariationColor();
+                          _bolsaLabelIcon();
+                        }),
+                  ]),
+            )));
   }
 
-  Widget _circularLoading() {
+  Widget _circularLoadingStock() {
+    return Padding(
+        padding: EdgeInsets.only(top: 20, bottom: 10, left: 50, right: 50),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 20,
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[400],
+                  blurRadius: 10.0,
+                  spreadRadius: 0.1,
+                  offset: Offset(
+                    5.0,
+                    5.0,
+                  ),
+                )
+              ],
+            ),
+            child: Center(
+                child: Container(
+              height: 15.0,
+              width: 15.0,
+              child: CircularProgressIndicator(),
+            ))));
+  }
+
+  _circularLoading() {
     return Container(
       height: 15.0,
       width: 15.0,
@@ -633,49 +680,60 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Color _bolsaLabelVariationColor() {
-    if (double.parse(variationNasdaq) < 0) {
-      _colorVariation = Colors.red[400];
-    } else {
-      _colorVariation = Colors.green[400];
+  Future _bolsaLabelVariationColor() async {
+    final _moneyData = await getData();
+    if (_moneyData != null) {
+      setState(() {
+        if (double.parse(variationIbovespa) < 0) {
+          _colorVariationIbovespa = Colors.red[400];
+        } else {
+          _colorVariationIbovespa = Colors.green[400];
+        }
+        if (double.parse(variationNasdaq) < 0) {
+          _colorVariationNasdaq = Colors.red[400];
+        } else {
+          _colorVariationNasdaq = Colors.green[400];
+        }
+        if (double.parse(variationCac) < 0) {
+          _colorVariationCac = Colors.red[400];
+        } else {
+          _colorVariationCac = Colors.green[400];
+        }
+        if (double.parse(variationNikkei) < 0) {
+          _colorVariationNikkei = Colors.red[400];
+        } else {
+          _colorVariationNikkei = Colors.green[400];
+        }
+      });
     }
-    if (double.parse(variationCac) < 0) {
-      _colorVariation = Colors.red[400];
-    } else {
-      _colorVariation = Colors.green[400];
-    }
-    if (double.parse(variationNikkei) < 0) {
-      _colorVariation = Colors.red[400];
-    } else {
-      _colorVariation = Colors.green[400];
-    }
-
-    return _colorVariation;
   }
 
-  _bolsaLabelIcon() {
-    if (double.parse(variationIbovespa) < 0) {
-      _iconVariation = _iconArrowDown();
-    } else {
-      _iconVariation = _iconArrowUp();
+  Future _bolsaLabelIcon() async {
+    final _moneyData = await getData();
+    if (_moneyData != null) {
+      setState(() {
+        if (double.parse(variationIbovespa) < 0) {
+          _iconVariationIbovespa = _iconArrowDown();
+        } else {
+          _iconVariationIbovespa = _iconArrowUp();
+        }
+        if (double.parse(variationNasdaq) < 0) {
+          _iconVariationNasdaq = _iconArrowDown();
+        } else {
+          _iconVariationNasdaq = _iconArrowUp();
+        }
+        if (double.parse(variationCac) < 0) {
+          _iconVariationCac = _iconArrowDown();
+        } else {
+          _iconVariationCac = _iconArrowUp();
+        }
+        if (double.parse(variationNikkei) < 0) {
+          _iconVariationNikkei = _iconArrowDown();
+        } else {
+          _iconVariationNikkei = _iconArrowUp();
+        }
+      });
     }
-    if (double.parse(variationNasdaq) < 0) {
-      _iconVariation = _iconArrowDown();
-    } else {
-      _iconVariation = _iconArrowUp();
-    }
-    if (double.parse(variationCac) < 0) {
-      _iconVariation = _iconArrowDown();
-    } else {
-      _iconVariation = _iconArrowUp();
-    }
-    if (double.parse(variationNikkei) < 0) {
-      _iconVariation = _iconArrowDown();
-    } else {
-      _iconVariation = _iconArrowUp();
-    }
-
-    return _iconVariation;
   }
 
   IconData _iconArrowDown() {
